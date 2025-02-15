@@ -1,59 +1,61 @@
-let randomnumber,guess,maxGuess;
+let randomNumber = 0;
+let attempt = 0;
+let maxAttempts = 0;
+let range = 0;
+document.getElementById("start").addEventListener("click",startgame);
 function startgame(){
     const difficulty = document.getElementById("difficulty").value;
-    let maxRange;
+    range;
     switch (difficulty){
         case "Facile":
-            maxRange = 10;
-            maxGuess = 5;
+            range = 10;
+            maxAttempts = 5;
             break;
         case "Intermédiaire":
-            maxRange = 100;
-            maxGuess = 3;
+            range = 100;
+            maxAttempts = 3;
             break;
         case "Difficile":
-            maxRange = 1000;
-            maxGuess = 1;
+            range = 1000;
+            maxAttempts = 1;
+            break;
+        default:
+            range = 10;  
+            maxAttempts = 5;
             break;
     }
-    randomnumber = Math.floor(Math.random()*maxRange+1);
-    guess = 0;
+    randomNumber = Math.floor(Math.random()*range)+1;
+    attempt = 0;
     document.getElementById("number").value="";
     document.getElementById("game").classList.remove("hidden");
-    document.getElementById("message").textContent="Le jeu commence, vous avez "+maxGuess+" essais";
-    document.getElementById("message").textContent="Devinez un nombre aléatoire entre 1 et "+maxRange;
+    document.getElementById("message").textContent=`Le jeu commence, vous avez ${maxAttempts} essais`;
+    document.getElementById("intervalle").textContent=`Devinez un nombre aléatoire entre 1 et ${range}`;
 }
+document.getElementById("check").addEventListener("click",check);
 function check(){
     const userGuess =parseInt( document.getElementById("number").value,10);
-    if (isNaN(userGuess)) {
+    if (isNaN(userGuess)|| userGuess < 1 || userGuess > range) {
         document.getElementById("message").textContent = "Veuillez entrer un nombre valide!";
         return;
     }
-    if(userGuess == randomnumber){
+    if(userGuess == randomNumber){
         document.getElementById("game").classList.add("hidden");
         alert("Bravo, vous avez trouvé le nombre!");
-        setTimeout(restart, 1500);         
-        //document.getElementById("message").textContent="Bravo, vous avez trouvé le nombre";
-        //document.getElementById("game").classList.add("hidden");
-        //setTimeout(restart,1000);
+        setTimeout(restart, 500);         
     }else{
-        guess++;
-        if(guess == maxGuess){
-            //document.getElementById("message").textContent="Vous avez perdu, le nombre était "+randomnumber;
-            //document.getElementById("game").classList.add("hidden");
-            document.getElementById("game").classList.add("hidden");
-            alert("Vous avez perdu, le nombre était " + randomnumber);
-            setTimeout(restart, 1500);
+        attempt++;
+        if(attempt == maxAttempts){
+            alert(`Vous avez perdu, le nombre était ${randomNumber}`);
+            setTimeout(restart, 500);
         }else{
             document.getElementById("number").value="";
-            document.getElementById("message").textContent="Désolé, ce n'est pas le bon nombre, il vous reste "+(maxGuess-guess)+" essais";
+            document.getElementById("message").textContent=`Désolé, ce n'est pas le bon nombre, il vous reste ${maxAttempts - attempt} essais`;
         }
     }
 }
 function restart() {
     const replay = prompt("Voulez-vous rejouer ? (oui ou non)");
-
-    if (replay && replay.toLowerCase() === "oui") {
+    if (replay.toLowerCase() === "oui") {
         startgame();
     } else {
         document.getElementById("game").classList.add("hidden");
